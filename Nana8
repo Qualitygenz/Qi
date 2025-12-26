@@ -386,45 +386,6 @@ RunService.RenderStepped:Connect(function(delta)
     end
 end)
 
--- Pickup Itemlocal Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-
-local LocalPlayer = Players.LocalPlayer
-local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local HRP = Character:WaitForChild("HumanoidRootPart")
-
-local PICKUP_DISTANCE = 350
-local TOUCH_REPEAT = 25
-
-local pickupEnabled = false
-
-local function firetouch(partA, partB)
-    for i = 1, TOUCH_REPEAT do
-        firetouchinterest(partA, partB, 0)
-        firetouchinterest(partA, partB, 1)
-    end
-end
-
-RunService.RenderStepped:Connect(function()
-    if pickupEnabled then
-        for _, item in pairs(workspace.DroppedItems:GetChildren()) do
-            local zone = item:FindFirstChild("PickUpZone")
-            if zone and zone:IsA("BasePart") then
-                local dist = (HRP.Position - zone.Position).Magnitude
-                if dist <= PICKUP_DISTANCE then
-                    firetouch(zone, HRP)
-                end
-            end
-        end
-    end
-end)
-PlayersTab:Toggle({
-    Title = "Pickup Item",
-    Default = false,
-    Callback = function(state)
-        pickupEnabled = state
-    end
-})
 
 PlayersTab:Section({
 	Title = 'Misc:',
