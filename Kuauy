@@ -394,21 +394,15 @@ PlayersTab:Section({
 PlayersTab:Button({
 	Title = "Invisible",
 	Callback = function()
-		-- บังคับรีตัว (ไม่สนเลือด)
-		LocalPlayer:LoadCharacter()
-
-		-- เกมนี้เกิดใหม่ 6 วิ
-		task.wait(6)
-
 		setfflag("NextGenReplicatorEnabledWrite4", "false")
 		print("NextGenReplicatorEnabledWrite4 false")
 
-		task.wait(0.1)
+		task.wait(2)
 
 		setfflag("NextGenReplicatorEnabledWrite4", "true")
 		print("NextGenReplicatorEnabledWrite4 true")
 	end
-})
+})​
 
 
 --// ================= ESP SYSTEM =================
