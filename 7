@@ -98,7 +98,7 @@ local CombatTab   = Window:Tab({Title = "Combat",   Icon = "crosshair"})
 --// ================= STATE (เปิดตลอด) =================
 local SilentAimEnabled = true      -- เปิดตลอด
 local TracerEnabled   = true       -- เปิดตลอด
-local ShowFOV         = true       -- คุมด้วย UI
+local ShowFOV         = false       -- คุมด้วย UI
 local FOV             = 150        -- คุมด้วย Slider
 
 --// ================= GUN LIST (ลิสต์ล้วน) =================
@@ -211,16 +211,15 @@ RunService.RenderStepped:Connect(function()
 		and LocalPlayer.Character:FindFirstChild("Head") then
 
 		local tPos, tOn = Camera:WorldToViewportPoint(target.Character.Head.Position)
+		local mPos, mOn = Camera:WorldToViewportPoint(LocalPlayer.Character.Head.Position)
 
-if tOn then
-	tracerLine.From = Vector2.new(
-		Camera.ViewportSize.X / 2,
-		Camera.ViewportSize.Y / 2
-	)
-	tracerLine.To = Vector2.new(tPos.X, tPos.Y)
-	tracerLine.Visible = true
-	return
-end
+		if tOn and mOn then
+			tracerLine.From = Vector2.new(mPos.X, mPos.Y)
+			tracerLine.To   = Vector2.new(tPos.X, tPos.Y)
+			tracerLine.Visible = true
+			return
+		end
+	end
 
 	tracerLine.Visible = false
 end)
