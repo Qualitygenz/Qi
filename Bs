@@ -380,7 +380,7 @@ RunService.RenderStepped:Connect(function(delta)
         if hum and root then
             local moveDir = hum.MoveDirection
             if moveDir.Magnitude > 0 then
-                root.CFrame = root.CFrame + moveDir.Unit * speedMultiplier * delta * 60
+                root.CFrame = root.CFrame + moveDir.Unit * speedMultiplier * delta * 1
             end
         end
     end
