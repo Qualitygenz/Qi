@@ -386,6 +386,10 @@ RunService.RenderStepped:Connect(function(delta)
     end
 end)
 
+PlayersTab:Section({
+	Title = 'misc:',
+})
+
 --// ================= ESP SYSTEM =================
 local EspNameEnabled = false
 local EspHealthEnabled = false
