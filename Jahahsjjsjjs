@@ -94,6 +94,10 @@ end
 
 
 local CombatTab   = Window:Tab({Title = "Combat",   Icon = "crosshair"})
+local PlayerTab   = Window:Tab({Title = "Players",   Icon = "user"})
+local EspTab   = Window:Tab({Title = "Esp",   Icon = "eye"})
+local MiscTab   = Window:Tab({Title = "Misc",   Icon = "ltable-of-contents"})
+local ServerTab   = Window:Tab({Title = "Server",   Icon = "server"})
 
 --// ================= STATE (เปิดตลอด) =================
 local SilentAimEnabled = true      -- เปิดตลอด
