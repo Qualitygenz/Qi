@@ -444,6 +444,83 @@ PlayersTab:Button({
 	end
 })​
 
+PlayersTab:Section({
+	Title = 'Misc:',
+})
+
+local func = {}
+
+func['EnabledSnap'] = function()
+	print('⚡ Snap system started.')
+	local basePosition = RootPart.Position
+	while EnabledSnapRunning do
+		task.wait()
+		if not EnabledSnapRunning then
+			break
+		end
+		local currentY = RootPart.Position.Y
+		local targetY = basePosition.Y - YoffsetValue
+		local deltaY = targetY - currentY
+		RootPart.CFrame = RootPart.CFrame * CFrame.new(0, deltaY, 0)
+	end
+	print('❌ Snap system stopped.')
+end
+
+-- 🔘 Toggle & Keybind Sync System
+local function SetSnapState(value)
+	if EnabledSnapRunning == value then
+		return
+	end -- ไม่ต้องทำซ้ำ
+	EnabledSnapRunning = value
+	print('📀 Underground:', value)
+	if value then
+		if not SnapThread then
+			SnapThread = task.spawn(func['EnabledSnap'])
+		end
+	else
+		SnapThread = nil
+	end
+
+    -- Sync UI Toggle ให้ตรงกับสถานะ
+	MainTab:Get('UndergroundToggle'):SetValue(value)
+end
+
+-- 🧩 Toggle
+PlayerTab:Toggle({
+	Title = 'Underground',
+	Icon = 'check',
+	Type = 'Checkbox',
+	Value = false,
+	Flag = 'UndergroundToggle', -- ต้องมี flag เพื่อให้ sync ได้
+	Callback = function(value)
+		SetSnapState(value)
+	end,
+})
+
+-- 🎹 Keybind
+PlayersTab:Keybind({
+	Title = 'Keybind',
+	Value = 'G',
+	Callback = function()
+		SetSnapState(not EnabledSnapRunning)
+	end,
+})
+
+-- 📏 Slider Snap Height
+PlayersTab:Slider({
+	Title = 'Snap Height',
+	Step = 1,
+	Value = {
+		Min = 1,
+		Max = 100,
+		Default = 10,
+	},
+	Callback = function(value)
+		YoffsetValue = value
+		print('📏 Yoffset set to:', value)
+	end,
+})
+
 
 --// ================= ESP SYSTEM =================
 local EspNameEnabled = false
