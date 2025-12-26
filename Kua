@@ -391,30 +391,20 @@ PlayersTab:Section({
 })
 
 
---// ===== Invisible Button =====
 PlayersTab:Button({
 	Title = "Invisible",
 	Callback = function()
-		local char = LocalPlayer.Character
-		local hum = char and char:FindFirstChildOfClass("Humanoid")
+		-- บังคับรีตัว (ไม่สนเลือด)
+		LocalPlayer:LoadCharacter()
 
-		if hum then
-			-- บังคับให้ตายจริง (เลือดติดลบ)
-			hum.Health = -math.huge
-			hum:ChangeState(Enum.HumanoidStateType.Dead)
-		end
+		-- เกมนี้เกิดใหม่ 6 วิ
+		task.wait(6)
 
-		-- รอเกิดใหม่ (เกมหน่วง 6 วิเอง)
-		local newChar = LocalPlayer.CharacterAdded:Wait()
-		newChar:WaitForChild("HumanoidRootPart")
-
-		-- ปิด fflag
 		setfflag("NextGenReplicatorEnabledWrite4", "false")
 		print("NextGenReplicatorEnabledWrite4 false")
 
 		task.wait(0.1)
 
-		-- เปิดกลับ
 		setfflag("NextGenReplicatorEnabledWrite4", "true")
 		print("NextGenReplicatorEnabledWrite4 true")
 	end
