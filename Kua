@@ -509,7 +509,7 @@ EspTab:Toggle({
 })
 
 EspTab:Toggle({
-	Title = "ESP Health %",
+	Title = "ESP Health",
 	Default = false,
 	Callback = function(v)
 		EspHealthEnabled = v
