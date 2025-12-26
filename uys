@@ -448,83 +448,50 @@ PlayersTab:Section({
 	Title = 'Snap:',
 })
 
---// ================= SNAP / UNDERGROUND SYSTEM =================
+--// ================= Players Snap =================
 
--- Services & Player
+-- Services
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+
 local LocalPlayer = Players.LocalPlayer
 
 -- State
-local EnabledSnapRunning = false
-local SnapThread = nil
-local YoffsetValue = 10
+local SnapEnabled = false
+local SnapDepth = 10  -- ค่าเริ่มต้น 1–60
 
 -- Snap Function
-local func = {}
-
-func.EnabledSnap = function()
-    print("⚡ Snap system started.")
-    
+local function SnapLoop()
     local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
     local root = character:WaitForChild("HumanoidRootPart")
-    local baseY = root.Position.Y
 
-    while EnabledSnapRunning and root.Parent do
-        task.wait(0.05)  -- ลดการใช้ CPU
-        local currentY = root.Position.Y
-        local targetY = baseY - YoffsetValue
-        local deltaY = targetY - currentY
-        root.CFrame = root.CFrame * CFrame.new(0, deltaY, 0)
+    while SnapEnabled and root.Parent do
+        task.wait(0.05)  -- ป้องกันโหลดสูง
+        local currentPos = root.Position
+        root.CFrame = CFrame.new(currentPos.X, currentPos.Y - SnapDepth, currentPos.Z)
     end
-
-    print("❌ Snap system stopped.")
 end
 
--- Toggle / Keybind Controller
-local function SetSnapState(state)
-    if EnabledSnapRunning == state then return end
-    EnabledSnapRunning = state
-
-    if state then
-        SnapThread = task.spawn(func.EnabledSnap)
-    else
-        SnapThread = nil
-    end
-
-    print("📀 Underground:", state)
-end
-
--- UI : Toggle
+-- Toggle UI
 PlayersTab:Toggle({
-    Title = "Underground",
+    Title = "Snap",
     Value = false,
-    Flag = "UndergroundToggle",
-    Callback = function(v)
-        SetSnapState(v)
+    Callback = function(state)
+        SnapEnabled = state
+        if state then
+            task.spawn(SnapLoop)  -- เริ่ม loop
+        end
     end
 })
 
--- UI : Keybind
-PlayersTab:Keybind({
-    Title = "Keybind",
-    Value = "G",
-    Callback = function()
-        SetSnapState(not EnabledSnapRunning)
-    end
-})
-
--- UI : Slider
+-- Slider UI
 PlayersTab:Slider({
-    Title = "Snap Height",
+    Title = "Snap Depth",
+    Value = {Min = 1, Max = 60, Default = SnapDepth},
     Step = 1,
-    Value = {
-        Min = 1,
-        Max = 100,
-        Default = 10
-    },
-    Callback = function(v)
-        YoffsetValue = v
-        print("📏 Snap Height set to:", v)
+    Callback = function(value)
+        SnapDepth = value
+        print("📏 Snap Depth:", SnapDepth)
     end
 })
 
