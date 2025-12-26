@@ -486,7 +486,7 @@ local function SetSnapState(value)
 end
 
 -- 🧩 Toggle
-PlayerTab:Toggle({
+PlayersTab:Toggle({
 	Title = 'Underground',
 	Icon = 'check',
 	Type = 'Checkbox',
