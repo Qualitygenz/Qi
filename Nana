@@ -444,57 +444,6 @@ PlayersTab:Button({
 	end
 })​
 
-PlayersTab:Section({
-	Title = 'Snap:',
-})
-
---// ================= Players Snap =================
-
--- Services
-local Players = game:GetService("Players")
-local RunService = game:GetService("RunService")
-
-local LocalPlayer = Players.LocalPlayer
-
--- State
-local SnapEnabled = false
-local SnapDepth = 10  -- ค่าเริ่มต้น 1–60
-
--- Snap Function
-local function SnapLoop()
-    local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-    local root = character:WaitForChild("HumanoidRootPart")
-
-    while SnapEnabled and root.Parent do
-        task.wait(0.05)  -- ป้องกันโหลดสูง
-        local currentPos = root.Position
-        root.CFrame = CFrame.new(currentPos.X, currentPos.Y - SnapDepth, currentPos.Z)
-    end
-end
-
--- Toggle UI
-PlayersTab:Toggle({
-    Title = "Snap",
-    Value = false,
-    Callback = function(state)
-        SnapEnabled = state
-        if state then
-            task.spawn(SnapLoop)  -- เริ่ม loop
-        end
-    end
-})
-
--- Slider UI
-PlayersTab:Slider({
-    Title = "Snap Depth",
-    Value = {Min = 1, Max = 60, Default = SnapDepth},
-    Step = 1,
-    Callback = function(value)
-        SnapDepth = value
-        print("📏 Snap Depth:", SnapDepth)
-    end
-})
-
 
 --// ================= ESP SYSTEM =================
 local EspNameEnabled = false
