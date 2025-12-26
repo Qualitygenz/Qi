@@ -482,7 +482,7 @@ local function SetSnapState(value)
 	end
 
     -- Sync UI Toggle ให้ตรงกับสถานะ
-	MainTab:Get('UndergroundToggle'):SetValue(value)
+	PlayersTab:Get('UndergroundToggle'):SetValue(value)
 end
 
 -- 🧩 Toggle
