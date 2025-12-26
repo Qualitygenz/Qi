@@ -94,7 +94,7 @@ end
 
 
 local CombatTab   = Window:Tab({Title = "Combat",   Icon = "crosshair"})
-local PlayerTab   = Window:Tab({Title = "Players",   Icon = "user"})
+local PlayersTab   = Window:Tab({Title = "Players",   Icon = "user"})
 local EspTab   = Window:Tab({Title = "Esp",   Icon = "eye"})
 local MiscTab   = Window:Tab({Title = "Misc",   Icon = "ltable-of-contents"})
 local ServerTab   = Window:Tab({Title = "Server",   Icon = "server"})
@@ -289,3 +289,99 @@ CombatTab:Dropdown({
 		end
 	end
 })
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local player = Players.LocalPlayer
+
+local defaultJumpPower = 20
+local maxJumpPower = 100
+local highJumpPower = 60
+local highJump = false
+
+local function setJumpPower(power)
+    local char = player.Character or player.CharacterAdded:Wait()
+    local hum = char:FindFirstChildOfClass("Humanoid")
+    if hum then
+        hum.UseJumpPower = true
+        hum.JumpPower = math.clamp(power, 0, maxJumpPower)
+    end
+end
+
+local function setupCharacter(char)
+    local hum = char:WaitForChild("Humanoid")
+    hum.AutoJumpEnabled = false  
+
+    if highJump then
+        hum.UseJumpPower = true
+        hum.JumpPower = highJumpPower
+    else
+        hum.JumpPower = defaultJumpPower
+    end
+end
+
+player.CharacterAdded:Connect(setupCharacter)
+if player.Character then
+    setupCharacter(player.Character)
+end
+
+--// ===== High Jump =====
+PlayersTab:Toggle({
+    Title = "High Jump",
+    Default = false,
+    Callback = function(state)
+        highJump = state
+        if state then
+            setJumpPower(highJumpPower)
+        else
+            setJumpPower(defaultJumpPower)
+        end
+    end
+})
+
+PlayersTab:Slider({
+    Title = "Jump Power",
+    Value = { Min = 20, Max = maxJumpPower, Default = highJumpPower },
+    Step = 1,
+    Callback = function(value)
+        highJumpPower = tonumber(value)
+        if highJump then
+            setJumpPower(highJumpPower)
+        end
+    end
+})
+
+--// ===== Walk Speed =====
+local walkSpeed = false
+local speedMultiplier = 0.10
+
+PlayersTab:Toggle({
+    Title = "Walk Speed",
+    Default = false,
+    Callback = function(state)
+        walkSpeed = state
+    end
+})
+
+PlayersTab:Slider({
+    Title = "Speed Multiplier",
+    Value = { Min = 1, Max = 5, Default = speedMultiplier },
+    Step = 1,
+    Callback = function(value)
+        speedMultiplier = tonumber(value)
+    end
+})
+
+RunService.RenderStepped:Connect(function(delta)
+    if walkSpeed and player.Character then
+        local char = player.Character
+        local hum = char:FindFirstChildOfClass("Humanoid")
+        local root = char:FindFirstChild("HumanoidRootPart")
+        if hum and root then
+            local moveDir = hum.MoveDirection
+            if moveDir.Magnitude > 0 then
+                root.CFrame = root.CFrame + moveDir.Unit * speedMultiplier * delta * 60
+            end
+        end
+    end
+end)
