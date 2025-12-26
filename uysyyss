@@ -454,9 +454,6 @@ PlayersTab:Section({
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 
-local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-local RootPart = Character:WaitForChild("HumanoidRootPart")
-
 -- State
 local EnabledSnapRunning = false
 local SnapThread = nil
@@ -466,73 +463,71 @@ local YoffsetValue = 10
 local func = {}
 
 func.EnabledSnap = function()
-	print("⚡ Snap system started.")
-	local baseY = RootPart.Position.Y
+    print("⚡ Snap system started.")
+    
+    local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local root = character:WaitForChild("HumanoidRootPart")
+    local baseY = root.Position.Y
 
-	while EnabledSnapRunning do
-		task.wait()
+    while EnabledSnapRunning and root.Parent do
+        task.wait(0.05)  -- ลดการใช้ CPU
+        local currentY = root.Position.Y
+        local targetY = baseY - YoffsetValue
+        local deltaY = targetY - currentY
+        root.CFrame = root.CFrame * CFrame.new(0, deltaY, 0)
+    end
 
-		if not RootPart or not RootPart.Parent then
-			break
-		end
-
-		local currentY = RootPart.Position.Y
-		local targetY = baseY - YoffsetValue
-		local deltaY = targetY - currentY
-
-		RootPart.CFrame = RootPart.CFrame * CFrame.new(0, deltaY, 0)
-	end
-
-	print("❌ Snap system stopped.")
+    print("❌ Snap system stopped.")
 end
 
 -- Toggle / Keybind Controller
 local function SetSnapState(state)
-	if EnabledSnapRunning == state then return end
-	EnabledSnapRunning = state
+    if EnabledSnapRunning == state then return end
+    EnabledSnapRunning = state
 
-	if state then
-		SnapThread = task.spawn(func.EnabledSnap)
-	else
-		SnapThread = nil
-	end
+    if state then
+        SnapThread = task.spawn(func.EnabledSnap)
+    else
+        SnapThread = nil
+    end
 
-	print("📀 Underground:", state)
+    print("📀 Underground:", state)
 end
 
 -- UI : Toggle
 PlayersTab:Toggle({
-	Title = "Underground",
-	Value = false,
-	Flag = "UndergroundToggle",
-	Callback = function(v)
-		SetSnapState(v)
-	end
+    Title = "Underground",
+    Value = false,
+    Flag = "UndergroundToggle",
+    Callback = function(v)
+        SetSnapState(v)
+    end
 })
 
 -- UI : Keybind
 PlayersTab:Keybind({
-	Title = "Keybind",
-	Value = "G",
-	Callback = function()
-		SetSnapState(not EnabledSnapRunning)
-	end
+    Title = "Keybind",
+    Value = "G",
+    Callback = function()
+        SetSnapState(not EnabledSnapRunning)
+    end
 })
 
 -- UI : Slider
 PlayersTab:Slider({
-	Title = "Snap Height",
-	Step = 1,
-	Value = {
-		Min = 1,
-		Max = 100,
-		Default = 10
-	},
-	Callback = function(v)
-		YoffsetValue = v
-		print("📏 Yoffset:", v)
-	end
+    Title = "Snap Height",
+    Step = 1,
+    Value = {
+        Min = 1,
+        Max = 100,
+        Default = 10
+    },
+    Callback = function(v)
+        YoffsetValue = v
+        print("📏 Snap Height set to:", v)
+    end
 })
+
 
 --// ================= ESP SYSTEM =================
 local EspNameEnabled = false
