@@ -387,7 +387,36 @@ RunService.RenderStepped:Connect(function(delta)
 end)
 
 PlayersTab:Section({
-	Title = 'misc:',
+	Title = 'Misc:',
+})
+
+--// ===== Invisible Button =====
+PlayersTab:Button({
+	Title = "Invisible",
+	Callback = function()
+		local char = LocalPlayer.Character
+		local hum = char and char:FindFirstChildOfClass("Humanoid")
+
+		-- รีตัว
+		if hum then
+			hum.Health = 0
+		end
+
+		-- รอเกิดใหม่ (เกมรอ 6 วิเอง)
+		local newChar = LocalPlayer.CharacterAdded:Wait()
+		newChar:WaitForChild("HumanoidRootPart")
+
+		-- ปิด fflag
+		setfflag("NextGenReplicatorEnabledWrite4", "false")
+		print("NextGenReplicatorEnabledWrite4 false")
+
+		-- หน่วงสั้น ๆ ให้ replicate เสถียร
+		task.wait(0.1)
+
+		-- เปิดกลับ
+		setfflag("NextGenReplicatorEnabledWrite4", "true")
+		print("NextGenReplicatorEnabledWrite4 true")
+	end
 })
 
 --// ================= ESP SYSTEM =================
