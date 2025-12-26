@@ -266,7 +266,7 @@ end
 
 --// ===== Save Friend Dropdown (SilentAim Ignore) =====
 CombatTab:Dropdown({
-	Title = "Save Friend (SilentAim Ignore)",
+	Title = "Save Friend",
 	Values = GetPlayerNames(),
 	Multi = true,
 	Default = {},
